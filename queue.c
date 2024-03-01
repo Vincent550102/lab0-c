@@ -13,8 +13,10 @@
 
 void e_free(element_t *e)
 {
-    free(e->value);
-    free(e);
+    if (e->value)
+        free(e->value);
+    if (e)
+        free(e);
 }
 
 
@@ -104,6 +106,20 @@ int q_size(struct list_head *head)
 bool q_delete_mid(struct list_head *head)
 {
     // https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/
+    if (!head || list_empty(head))
+        return false;
+    struct list_head *slow = head, *fast;
+    list_for_each (fast, head) {
+        fast = fast->next;
+        if (fast != head && fast->next != head)
+            fast = fast->next;
+        else
+            break;
+        slow = slow->next;
+    }
+    element_t *e = list_entry(slow->next, element_t, list);
+    list_del(&e->list);
+    e_free(e);
     return true;
 }
 

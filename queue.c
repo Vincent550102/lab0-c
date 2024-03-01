@@ -11,6 +11,12 @@
  *   cppcheck-suppress nullPointer
  */
 
+void e_free(element_t *e)
+{
+    free(e->value);
+    free(e);
+}
+
 
 /* Create an empty queue */
 struct list_head *q_new()
@@ -30,7 +36,7 @@ void q_free(struct list_head *head)
     element_t *pos, *n;
     list_for_each_entry_safe (pos, n, head, list) {
         list_del(&pos->list);
-        free(pos);
+        e_free(pos);
     }
     free(head);
 }

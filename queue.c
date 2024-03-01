@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "list.h"
 #include "queue.h"
 
 /* Notice: sometimes, Cppcheck would find the potential NULL pointer bugs,
@@ -14,7 +15,13 @@
 /* Create an empty queue */
 struct list_head *q_new()
 {
-    return NULL;
+    struct list_head *list = malloc(sizeof(struct list_head));
+    // check malloc
+    if (!list)
+        return NULL;
+    INIT_LIST_HEAD(list);
+
+    return list;
 }
 
 /* Free all storage used by queue */

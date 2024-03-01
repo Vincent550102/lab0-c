@@ -110,7 +110,6 @@ bool q_delete_mid(struct list_head *head)
         return false;
     struct list_head *slow = head, *fast;
     list_for_each (fast, head) {
-        fast = fast->next;
         if (fast != head && fast->next != head)
             fast = fast->next;
         else
@@ -203,7 +202,7 @@ void q_reverseK(struct list_head *head, int k)
     }
 }
 
-/* Sort elements of queue in ascending/descending order */
+/* Sort elements of queue in ascending order */
 void q_sort(struct list_head *head, bool descend) {}
 
 /* Remove every node which has a node with a strictly less value anywhere to

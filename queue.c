@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -202,8 +203,62 @@ void q_reverseK(struct list_head *head, int k)
     }
 }
 
-/* Sort elements of queue in ascending order */
-void q_sort(struct list_head *head, bool descend) {}
+
+struct list_head *merge_two_lists(struct list_head *L1, struct list_head *L2)
+{
+    struct list_head *head = NULL, **ptr = &head, **node;
+
+    for (node = NULL; L1 && L2; *node = (*node)->next) {
+        element_t *e1 = list_entry(L1, element_t, list);
+        element_t *e2 = list_entry(L2, element_t, list);
+        node = strcmp(e1->value, e2->value) < 0 ? &L1 : &L2;
+        *ptr = *node;
+        ptr = &(*ptr)->next;
+    }
+    *ptr = (struct list_head *) ((u_int64_t) L1 | (u_int64_t) L2);
+    return head;
+}
+
+struct list_head *mergesort(struct list_head *head)
+{
+    if (!head || !head->next)
+        return head;
+
+    struct list_head *slow = head, *fast;
+    list_for_each (fast, head) {
+        if (fast && fast->next)
+            fast = fast->next;
+        else
+            break;
+        slow = slow->next;
+    }
+    struct list_head *mid = slow->next;
+    mid->prev->next = NULL;
+
+
+    struct list_head *left = mergesort(head), *right = mergesort(mid);
+    return merge_two_lists(left, right);
+}
+
+/* Sort elements of queue in ascending/descending order */
+void q_sort(struct list_head *head, bool descend)
+{
+    if (!head || list_empty(head))
+        return;
+    head->prev->next = NULL;
+    head->next = mergesort(head->next);
+    struct list_head *curr = head, *next = head->next;
+    while (next) {
+        next->prev = curr;
+        curr = next;
+        next = next->next;
+    }
+    curr->next = head;
+    head->prev = curr;
+
+    if (descend)
+        q_reverse(head);
+}
 
 /* Remove every node which has a node with a strictly less value anywhere to
  * the right side of it */

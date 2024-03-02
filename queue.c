@@ -36,6 +36,8 @@ struct list_head *q_new()
 /* Free all storage used by queue */
 void q_free(struct list_head *head)
 {
+    if (!head)
+        return;
     element_t *pos, *n;
     list_for_each_entry_safe (pos, n, head, list) {
         list_del(&pos->list);
@@ -47,11 +49,17 @@ void q_free(struct list_head *head)
 /* Insert an element at head of queue */
 bool q_insert_head(struct list_head *head, char *s)
 {
+    if (!head)
+        return false;
     element_t *new = malloc(sizeof(element_t));
     // check malloc
     if (!new)
         return false;
     new->value = strdup(s);
+    if (!new->value) {
+        free(new);
+        return false;
+    }
     list_add(&new->list, head);
     return true;
 }
@@ -59,11 +67,17 @@ bool q_insert_head(struct list_head *head, char *s)
 /* Insert an element at tail of queue */
 bool q_insert_tail(struct list_head *head, char *s)
 {
+    if (!head)
+        return false;
     element_t *new = malloc(sizeof(element_t));
     // check malloc
     if (!new)
         return false;
     new->value = strdup(s);
+    if (!new->value) {
+        free(new);
+        return false;
+    }
     list_add_tail(&new->list, head);
     return true;
 }
@@ -74,8 +88,10 @@ element_t *q_remove_head(struct list_head *head, char *sp, size_t bufsize)
     if (list_empty(head))
         return NULL;
     element_t *first = list_first_entry(head, element_t, list);
-    strncpy(sp, first->value, bufsize);
-    sp[bufsize - 1] = '\0';
+    if (sp && first->value) {
+        strncpy(sp, first->value, bufsize);
+        sp[bufsize - 1] = '\0';
+    }
     list_del(&first->list);
     return first;
 }
@@ -86,8 +102,10 @@ element_t *q_remove_tail(struct list_head *head, char *sp, size_t bufsize)
     if (list_empty(head))
         return NULL;
     element_t *last = list_last_entry(head, element_t, list);
-    strncpy(sp, last->value, bufsize);
-    sp[bufsize - 1] = '\0';
+    if (sp && last->value) {
+        strncpy(sp, last->value, bufsize);
+        sp[bufsize - 1] = '\0';
+    }
     list_del(&last->list);
     return last;
 }

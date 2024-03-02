@@ -87,7 +87,7 @@ element_t *q_remove_tail(struct list_head *head, char *sp, size_t bufsize)
     element_t *last = list_last_entry(head, element_t, list);
     strncpy(sp, last->value, bufsize);
     list_del(&last->list);
-    return NULL;
+    return last;
 }
 
 /* Return number of elements in queue */

@@ -287,15 +287,17 @@ int q_ascend(struct list_head *head)
     // https://leetcode.com/problems/remove-nodes-from-linked-list/
 
     struct list_head *li, *tmp;
+    q_reverse(head);
     char *max_val = list_first_entry(head, element_t, list)->value;
     list_for_each_safe (li, tmp, head) {
         element_t *e = list_entry(li, element_t, list);
-        if (strcmp(e->value, max_val) < 0) {
+        if (strcmp(e->value, max_val) > 0) {
             list_del(li);
             e_free(e);
         } else
             max_val = e->value;
     }
+    q_reverse(head);
     return q_size(head);
 }
 
